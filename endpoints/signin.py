@@ -1,10 +1,9 @@
 import mariadb
-from myapp import dbcreds
+import dbcreds
 from flask import request, Response
 import json
 from myapp import app
 import secrets
-import bcrypt
 
 def dbConnect():
     conn = None
@@ -29,8 +28,9 @@ def dbConnect():
     
     return (conn, cursor)
 
-@app.route('/api/signin', methods=['POST','DELETE'])
+@app.route('/api/signin', methods=['POST', 'DELETE'])
 def login_session():
+# logging in
     if (request.method == 'POST'):
         conn = None
         cursor = None
@@ -42,18 +42,17 @@ def login_session():
             cursor.execute("SELECT * FROM users WHERE email=? AND password=?",[email, password]) #If combination matches, will return rowcount 1, if combination do not match, will return 0
             user = cursor.fetchall()
             login_token = secrets.token_hex(16)
-            
             if cursor.rowcount == 1: #If user exist will = 1
                 user_id = user[0][0]
-                cursor.execute("INSERT INTO user_session(user_id, loginToken) VALUES(?,?)", [user_id, login_token]) #insert the created login token into user session table
+                cursor.execute("INSERT INTO user_session(user_id, login_token) VALUES(?,?)", [user_id, login_token]) #insert the created login token into user session table
                 conn.commit()
                 # fetchall returns dictionaries with tuples. Indexes reflect dictionary index and indexes of the tuples 
                 resp = {
                     "userId" : user[0][0],
-                    "firstName": user[0][1],
-                    "lastName": user[0][1],
-                    "email" : user[0][3],
-                    "phoneNumber": user[0][2],
+                    "firstName": user[0][2],
+                    "lastName": user[0][3],
+                    "email" : user[0][1],
+                    "phoneNumber": user[0][6],
                     "loginToken ": login_token
                 }
                 return Response(json.dumps(resp),
@@ -86,7 +85,7 @@ def login_session():
         return Response("Error something went wrong",
                         mimetype="text/plain",
                         status=500)
-
+# logging out 
     elif (request.method == 'DELETE'):
         conn = None
         cursor = None
@@ -94,9 +93,12 @@ def login_session():
 
         try:
             (conn, cursor) = dbConnect()
-            cursor.execute("DELETE from user_session WHERE loginToken=?",[login_token])
+            cursor.execute("DELETE from user_session WHERE login_token=?",[login_token])
             conn.commit()
-            return Response("Sucessfully logged out",
+            msg = {
+                "message": "Successfully loged out"
+            }
+            return Response(json.dumps(msg),
                             mimetype="text/html",
                             status=200)
         
