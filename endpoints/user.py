@@ -39,17 +39,17 @@ def user():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT user_id,first_name, last_name, email, phone_number FROM users WHERE id=?", [user_id])
+            cursor.execute("SELECT users.id, first_name, last_name, email, phone_number FROM users WHERE id=?", [user_id])
             result = cursor.fetchall()
             if cursor.rowcount > 0:
                 user_data = []
                 for user in result:
                     users = {
                         "userId": user_id,
-                        "email": user[1],
-                        "firstName": user[2],
-                        "lastName": user[3],
-                        "phone_number": user[6]
+                        "email": user[3],
+                        "firstName": user[1],
+                        "lastName": user[2],
+                        "phone_number": user[4]
                     }
                     user_data.append(users)
                 return Response(json.dumps(user_data),
@@ -83,9 +83,9 @@ def user():
             else:
                 print("Failed to read data")
 
-            return Response("Error something went wrong",
-                            mimetype="text/plain",
-                            status=500)
+        return Response("Error something went wrong",
+                        mimetype="text/plain",
+                        status=500)
 #create new user
     elif (request.method == 'POST'):
         cursor = None
