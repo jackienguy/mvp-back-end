@@ -53,13 +53,20 @@ def login_session():
                     "lastName": user[0][3],
                     "email" : user[0][1],
                     "phoneNumber": user[0][6],
+                    "role": user[0][12],
                     "loginToken ": login_token
                 }
                 return Response(json.dumps(resp),
                                 mimetype="application/json",
                                 status=200)  
             else: 
-                return ("Username or password inccorect, please try again")
+                msg = {
+                    "message": "Username or password inccorect, please try again"
+                }
+                return Response (json.dumps(msg),
+                                mimetype="application/json",
+                                status=400)
+
         except ValueError as error:
             print("Error" +str(error))
         except mariadb.DataError:

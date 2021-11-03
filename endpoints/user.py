@@ -94,12 +94,11 @@ def user():
         last_name = request.json.get('lastName')
         email = request.json.get('email')
         password = request.json.get('password')
-        phone_number = request.json.get('phoneNumber')
         role = request.json.get('role')
 
         try: 
             (conn, cursor) = dbConnection()
-            cursor.execute("INSERT INTO users(first_name, last_name, email, password, phone_number, role) VALUES(?,?,?,?,?,?)", [first_name, last_name, email, password, phone_number, role])
+            cursor.execute("INSERT INTO users(first_name, last_name, email, password, role) VALUES(?,?,?,?,?)", [first_name, last_name, email, password, role])
             if (len(password) < 6):
                 return ("Password need to be at least 8 characters long")
             user_id = cursor.lastrowid
@@ -112,6 +111,7 @@ def user():
                 "lastName": last_name,
                 "email": email,
                 "password": password,
+                "role": role,
                 "loginToken": login_token
             }
             return Response(json.dumps(newUser),
@@ -152,8 +152,6 @@ def user():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
         email = data.get('email')
-        phone_number = data.get('phoneNumber')
-        profile_picture = data.get('profilePicture')
         organization_name = data.get('organizationName')
         location = data.get('location')
         company_website = data.get('companyWebsite')
@@ -170,10 +168,6 @@ def user():
                 cursor.execute("UPDATE users SET last_name=? WHERE id=?", [last_name, user_id])
             elif (email != None and user[0][1] == login_token):
                 cursor.execute("UPDATE users SET email=? WHERE id=?", [email, user_id])
-            elif (phone_number != None and user[0][1] == login_token):
-                cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
-            elif (profile_picture != None and user[0][1] == login_token):
-                cursor.execute("UPDATE users SET profile_picturer=? WHERE id=?", [profile_picture, user_id])
             elif (organization_name != None and user[0][1] == login_token):
                 cursor.execute("UPDATE users SET organization_name=? WHERE id=?", [organization_name, user_id])
             elif (location != None and user[0][1] == login_token):
