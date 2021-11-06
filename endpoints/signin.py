@@ -4,6 +4,7 @@ from flask import request, Response
 import json
 from myapp import app
 import secrets
+import bcrypt
 
 def dbConnect():
     conn = None
@@ -39,29 +40,32 @@ def login_session():
         
         try:
             (conn, cursor) = dbConnect()
-            cursor.execute("SELECT * FROM users WHERE email=? AND password=?",[email, password]) #If combination matches, will return rowcount 1, if combination do not match, will return 0
-            user = cursor.fetchall()
+            cursor.execute("SELECT id, password, role FROM users WHERE email=?",[email,]) 
+            user = cursor.fetchone()
             login_token = secrets.token_hex(16)
-            if cursor.rowcount == 1: #If user exist will = 1
-                user_id = user[0][0]
-                cursor.execute("INSERT INTO user_session(user_id, login_token) VALUES(?,?)", [user_id, login_token]) #insert the created login token into user session table
-                conn.commit()
-                # fetchall returns dictionaries with tuples. Indexes reflect dictionary index and indexes of the tuples 
-                resp = {
-                    "userId" : user[0][0],
-                    "firstName": user[0][2],
-                    "lastName": user[0][3],
-                    "email" : user[0][1],
-                    "phoneNumber": user[0][6],
-                    "role": user[0][12],
-                    "loginToken ": login_token
-                }
-                return Response(json.dumps(resp),
-                                mimetype="application/json",
-                                status=200)  
+            if bcrypt.checkpw(password.encode(), user[1].encode()):
+                if user != None: 
+                    user_id = user[0]
+                    cursor.execute("INSERT INTO user_session(user_id, login_token) VALUES(?,?)", [user_id, login_token]) 
+                    conn.commit()
+                    resp = {
+                        "userId" : user[0],
+                        "loginToken": login_token,
+                        "role": user[2]
+                    }
+                    return Response(json.dumps(resp),
+                                    mimetype="application/json",
+                                    status=200)  
+                else:
+                    msg = { 
+                        "message": "password incorrect"
+                      }
+                    return Response (json.dumps(msg),
+                                    mimetype="application/json",
+                                    status=400)
             else: 
                 msg = {
-                    "message": "Username or password inccorect, please try again"
+                    "message": "Email or password inccorect, please try again"
                 }
                 return Response (json.dumps(msg),
                                 mimetype="application/json",

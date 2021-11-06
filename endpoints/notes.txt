@@ -1,0 +1,40 @@
+  cursor.execute("INSERT INTO jobs(user_id, working_title, organization_name, location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [recruiter_id, working_title, organization_name, location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number])
+
+
+
+   
+                conn.commit()
+                education = {
+                "userId": user_id,
+                "certificateName": result[1],
+                "major": result[2],
+                "institutionName": result[3],
+                "completionDate": result[4],
+                "location": result[5],
+                "other": result[6]            
+                }
+              
+           
+                cursor.execute("INSERT INTO skills(user_id, skill_type, proficiency_level) VALUES(?,?,?)", \ [user_id, skill_type, proficiency_level,])
+                skills = {
+                "userId": user_id,
+                "skillType": result[1],
+                "proficiencyLevel": result[2],           
+                }
+                return Response (json.dumps(skills),
+                                mimetype="application/json",
+                                status=201)
+            if experience:
+                cursor.execute("INSERT INTO work_experience(user_id, working_title, start_date, end_date, company_name, work_location, description) VALUES(?,?,?,?,?,?,?)",[user_id, working_title, company_name, work_location, start_date, end_date, description])
+                experience = {
+                "userId": user_id,
+                "workintTitle": result[1],
+                "startDate": result[2],
+                "endDate": result[3],
+                "companyName": result[4],
+                "workLocation": result[5],
+                "description": result[6]            
+                }
+                return Response (json.dumps(experience),
+                                mimetype="application/json",
+                                status=201)

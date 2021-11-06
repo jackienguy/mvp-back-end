@@ -4,6 +4,7 @@ import json
 from myapp import app
 import secrets
 import dbcreds
+import bcrypt
 
 
 def dbConnection():
@@ -39,20 +40,20 @@ def user():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT users.id, first_name, last_name, email, phone_number FROM users WHERE id=?", [user_id])
-            result = cursor.fetchall()
-            if cursor.rowcount > 0:
-                user_data = []
-                for user in result:
-                    users = {
-                        "userId": user_id,
-                        "email": user[3],
-                        "firstName": user[1],
-                        "lastName": user[2],
-                        "phone_number": user[4]
-                    }
-                    user_data.append(users)
-                return Response(json.dumps(user_data),
+            cursor.execute("SELECT id, first_name, last_name, organization_name, location, working_title, email, phone_number FROM users WHERE id=?", [user_id])
+            result = cursor.fetchone()
+            if result != None:
+                user = {
+                    "userId": result[0],
+                    "email": result[6],
+                    "firstName": result[1],
+                    "lastName": result[2],
+                    "organizationName": result[3],
+                    "location": result[4],
+                    "workingTitle": result[5],
+                    "phoneNumber": result[7]
+                }
+                return Response(json.dumps(user),
                                 mimetype="application/json",
                                 status=200)
             else:
@@ -98,7 +99,8 @@ def user():
 
         try: 
             (conn, cursor) = dbConnection()
-            cursor.execute("INSERT INTO users(first_name, last_name, email, password, role) VALUES(?,?,?,?,?)", [first_name, last_name, email, password, role])
+            hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt(13))
+            cursor.execute("INSERT INTO users(first_name, last_name, email, password, role) VALUES(?,?,?,?,?)", [first_name, last_name, email, hashed, role])
             if (len(password) < 6):
                 return ("Password need to be at least 8 characters long")
             user_id = cursor.lastrowid
@@ -156,45 +158,36 @@ def user():
         location = data.get('location')
         company_website = data.get('companyWebsite')
         working_title =data.get('workingTitle')
+        phone_number =data.get('phoneNumber')
 
         try:
             (conn, cursor) = dbConnection()
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
-            user = cursor.fetchall()
-            user_id = user[0][0]
-            if (first_name != None and user[0][1] == login_token):
+            user = cursor.fetchone()
+            user_id = user[0]
+            if (first_name != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET first_name=? WHERE id=?", [first_name, user_id])
-            elif (last_name != None and user[0][1] == login_token):
+            if (last_name != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET last_name=? WHERE id=?", [last_name, user_id])
-            elif (email != None and user[0][1] == login_token):
+            if (email != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET email=? WHERE id=?", [email, user_id])
-            elif (organization_name != None and user[0][1] == login_token):
+            if (organization_name != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET organization_name=? WHERE id=?", [organization_name, user_id])
-            elif (location != None and user[0][1] == login_token):
+            if (location != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET location=? WHERE id=?", [location, user_id])
-            elif (company_website != None and user[0][1] == login_token):
+            if (company_website != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET company_website=? WHERE id=?", [company_website, user_id])
-            elif (working_title != None and user[0][1] == login_token):
+            if (working_title != None and user[1] == login_token):
                 cursor.execute("UPDATE users SET working_title=? WHERE id=?", [working_title, user_id])
+            if (phone_number != None and user[1] == login_token):
+                    cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
             conn.commit()
-            cursor.execute("SELECT * FROM users WHERE id=?", [user_id])
-            updated_user_data = cursor.fetchall()
-            if cursor.rowcount == 1:
-                user_update = {
-                    "userId": updated_user_data[0][0],
-                    "firstName": updated_user_data[0][2],
-                    "lastName": updated_user_data[0][3],
-                    "email": updated_user_data[0][1],
-                    "phoneNumber": updated_user_data[0][6],
-                    "profilePicture": updated_user_data[0][7],
-                    "organizationName": updated_user_data[0][9],
-                    "location": updated_user_data[0][10],
-                    "companyWebsite": updated_user_data[0][11],
-                    "workingTitle": updated_user_data[0][12]
-                }
-            return Response(json.dumps(user_update),
-            mimetype="application/json",
-                status=200)
+            updatedUser = {
+                "userId": user_id
+            }
+            return Response(json.dumps(updatedUser),
+                            mimetype="application/json",
+                            status=200)
 
         except ValueError as error:
             print("Error" +str(error))
