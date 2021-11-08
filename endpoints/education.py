@@ -28,7 +28,7 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.route('/api/users/experience', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@app.route('/api/users/education', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 def experience():
     if (request.method == 'GET'):
         cursor = None
@@ -37,19 +37,19 @@ def experience():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT * from users INNER JOIN work_experience ON work_experience.user_id = users.id WHERE user_id=?", [user_id,])
+            cursor.execute("SELECT * from users INNER JOIN education ON education.user_id = users.id WHERE user_id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
-                experienceInfo = {
+                eduInfo = {
                     "userId": result[0],
-                    "workintTitle": result[1],
-                    "startDate": result[2],
-                    "endDate": result[3],
-                    "companyName": result[4],
-                    "workLocation": result[5],
-                    "description": result[6]      
+                    "certificateName": result[1],
+                    "major": result[3],
+                    "institutionName": result[4],
+                    "completionDate": result[5],
+                    "location": result[6],
+                    "other": result[7]  
                 }
-            return Response(json.dumps(experienceInfo),
+            return Response(json.dumps(eduInfo),
                             mimetype="application/json",
                             status=200)
         
@@ -82,30 +82,30 @@ def experience():
         conn = None
         data = request.json
         login_token = data.get('loginToken')
-        working_title = data.get('workingTitle')
-        company_name = data.get('companyName')
-        work_location = data.get('workLocation')
-        start_date = data.get('startDate')
-        end_date = data.get('endData')
-        description = data.get('description')
+        certificate_name = data.get('certificateName')
+        major = data.get('major"')
+        institution_name = data.get('institutionName')
+        completion_date = data.get('completionDate')
+        location = data.get('location')
+        other = data.get('other')
        
         try:
             (conn, cursor) = dbConnection()
             cursor.execute("SELECT user_id, login_token from user_session INNER JOIN users ON user_session.user_id = users.id WHERE login_token=?", [login_token,])
             result = cursor.fetchone()
             user_id = result[0]
-            cursor.execute("INSERT INTO work_experience(user_id, working_title, start_date, end_date, company_name, work_location, description) VALUES(?,?,?,?,?,?,?)",[user_id, working_title, company_name, work_location, start_date, end_date, description])
+            cursor.execute("INSERT INTO education(user_id, certificate_name, major, institution_name, completion_date, location, other) VALUES(?,?,?,?,?,?,?)",[user_id, certificate_name, major, institution_name, completion_date, location, other])
             conn.commit()
-            experience = {
+            education = {
                 "userId": user_id,
-                "workintTitle": result[1],
-                "startDate": result[2],
-                "endDate": result[3],
-                "companyName": result[4],
-                "workLocation": result[5],
-                "description": result[6]            
+                "certificateName": result[1],
+                "major": result[3],
+                "institutionName": result[4],
+                "completionDate": result[5],
+                "location": result[6],
+                "other": result[7]          
             }
-            return Response (json.dumps(experience),
+            return Response (json.dumps(education),
                             mimetype="application/json",
                             status=201)
 
@@ -140,35 +140,35 @@ def experience():
         conn = None
         cursor = None
         login_token = data.get('loginToken')
-        working_title = data.get('workingTitle')
-        company_name = data.get('companyName')
-        work_location = data.get('workLocation')
-        start_date = data.get('startDate')
-        end_date = data.get('endData')
-        description = data.get('description')
+        certificate_name = data.get('certificateName')
+        major = data.get('major"')
+        institution_name = data.get('institutionName')
+        completion_date = data.get('completionDate')
+        location = data.get('location')
+        other = data.get('other')
 
         try:
             (conn, cursor) = dbConnection()
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (working_title  != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET working_title=? WHERE user_id=?", [working_title, user_id])
-            if (company_name != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET company_name=? WHERE user_id=?", [company_name, user_id])
-            if (work_location != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET work_location=? WHERE user_id=?", [work_location, user_id])
-            if (start_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET start_date=? WHERE user_id=?", [start_date, user_id])
-            if (end_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET end_date=? WHERE user_id=?", [end_date, user_id])
-            if (description != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET description=? WHERE user_id=?", [description, user_id])
+            if (certificate_name != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET certificate_name=? WHERE user_id=?", [certificate_name, user_id])
+            if (major != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET major=? WHERE user_id=?", [major, user_id])
+            if (institution_name != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET institution_name=? WHERE user_id=?", [institution_name, user_id])
+            if (completion_date != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET completion_date=? WHERE user_id=?", [completion_date, user_id])
+            if (location != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET location=? WHERE user_id=?", [location, user_id])
+            if (other != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET other=? WHERE user_id=?", [other, user_id])
             conn.commit()
-            updatedExperience = {
+            updatedEducation = {
                 "userId": user_id
             }
-            return Response(json.dumps(updatedExperience),
+            return Response(json.dumps(updatedEducation),
                             mimetype="application/json",
                             status=200)
 
@@ -209,13 +209,13 @@ def experience():
                 cursor.execute("SELECT user_id, loginToken FROM user_session INNER JOIN users ON user_session.user_id = users.id WHERE loginToken=?", [ login_token,])
                 result = cursor.fetchone()
                 user_id = result[0]
-                cursor.execute("SELECT * FROM work_expereince WHERE user_id=?",[user_id,])
-                experience = cursor.fetchone()
-                if result[1] == login_token and user_id == experience[0]:
-                    cursor.execute("DELETE FROM work_expereince WHERE user_id=?",[user_id,])
+                cursor.execute("SELECT * FROM education WHERE user_id=?",[user_id,])
+                education = cursor.fetchone()
+                if result[1] == login_token and user_id == education[0]:
+                    cursor.execute("DELETE FROM education WHERE user_id=?",[user_id,])
                     conn.commit()
                     msg = {
-                        "message": "work experience deleted"
+                        "message": "education deleted"
                     }
                     return Response(json.dumps(msg),
                                     mimetype="application/json",
