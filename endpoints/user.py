@@ -64,14 +64,14 @@ def user():
                                 mimetype="application/json",
                                 status=400)
 
-        except mariadb.DataError:
-            print("something went wrong with your data")
-        except mariadb.OperationalError:
-            print("opertational error on the connection")
-        except mariadb.ProgrammingError:
-            print("apparently, you don't know how to code")
-        except mariadb.IntegrityError:
-            print("Error with DB integrity. most likelu constraint failure")
+        except mariadb.DataError as e:
+            print(e)
+        except mariadb.OperationalError as e:
+            print(e)
+        except mariadb.ProgrammingError as e:
+            print(e)
+        except mariadb.IntegrityError as e:
+            print(e)
         except:
             print("Something went wrong")
 
@@ -122,14 +122,14 @@ def user():
                             
         except ValueError as error:
             print("Error" +str(error))
-        except mariadb.DataError:
-            print("something went wrong with your data")
-        except mariadb.OperationalError:
-            print("opertational error on the connection")
-        except mariadb.ProgrammingError:
-            print("apparently, you don't know how to code")
-        except mariadb.IntegrityError:
-            print("Error with DB integrity. most likelu constraint failure")
+        except mariadb.DataError as e:
+            print(e)
+        except mariadb.OperationalError as e:
+            print(e)
+        except mariadb.ProgrammingError as e:
+            print(e)
+        except mariadb.IntegrityError as e:
+            print(e)
         except:
             print("Something went wrong")
 
@@ -191,14 +191,14 @@ def user():
 
         except ValueError as error:
             print("Error" +str(error))
-        except mariadb.DataError:
-            print("something went wrong with your data")
-        except mariadb.OperationalError:
-            print("opertational error on the connection")
-        except mariadb.ProgrammingError:
-            print("apparently, you don't know how to code")
-        except mariadb.IntegrityError:
-            print("Error with DB integrity. most likelu constraint failure")
+        except mariadb.DataError as e:
+            print(e)
+        except mariadb.OperationalError as e:
+            print(e)
+        except mariadb.ProgrammingError as e:
+            print(e)
+        except mariadb.IntegrityError as e:
+            print(e)
         except:
             print("Something went wrong")
 
@@ -235,14 +235,14 @@ def user():
                                 mimetype="text/html",
                                 status=200)
 
-        except mariadb.DataError:
-            print("something went wrong with your data")
-        except mariadb.OperationalError:
-            print("opertational error on the connection")
-        except mariadb.ProgrammingError:
-            print("apparently, you don't know how to code")
-        except mariadb.IntegrityError:
-            print("Error with DB integrity. most likelu constraint failure")
+        except mariadb.DataError as e:
+            print(e)
+        except mariadb.OperationalError as e:
+            print(e)
+        except mariadb.ProgrammingError as e:
+            print(e)
+        except mariadb.IntegrityError as e:
+            print(e)
         except:
             print("Something went wrong")
 
@@ -259,7 +259,7 @@ def user():
                         mimetype="text/plain",
                         status=500)
 
-
+   
 
 
 

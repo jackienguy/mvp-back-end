@@ -60,7 +60,7 @@ def resume():
             if user_id == education[0]
                 cursor.execute("INSERT INTO education(user_id, certificate_name, major, institution_name, completion_date, location, other) VALUES(?,?,?,?,?,?,?)",[user_id, certificate_name, major, institution_name, completion_date, location, other])
        
-       except ValueError as error:
+        except ValueError as error:
             print("Error" +str(error))
         except mariadb.DataError:
             print("something went wrong with your data")
