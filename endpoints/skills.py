@@ -90,8 +90,8 @@ def skills():
             conn.commit()
             skills = {
                 "userId": user_id,
-                "skillType": result[1],
-                "proficiencyLevel": result[2],          
+                "skillType": skill_type,
+                "proficiencyLevel": proficiency_level,          
             }
             return Response (json.dumps(skills),
                             mimetype="application/json",

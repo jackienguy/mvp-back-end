@@ -98,12 +98,12 @@ def education():
             conn.commit()
             education = {
                 "userId": user_id,
-                "certificateName": result[1],
-                "major": result[3],
-                "institutionName": result[4],
-                "completionDate": result[5],
-                "location": result[6],
-                "other": result[7]          
+                "certificateName": certificate_name,
+                "major": major,
+                "institutionName": institution_name,
+                "completionDate": completion_date,
+                "location":location,
+                "other": other          
             }
             return Response (json.dumps(education),
                             mimetype="application/json",

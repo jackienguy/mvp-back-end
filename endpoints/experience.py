@@ -37,17 +37,17 @@ def experience():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT * from users INNER JOIN work_experience ON work_experience.user_id = users.id WHERE user_id=?", [user_id,])
+            cursor.execute("SELECT * from work_experience WHERE user_id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 experienceInfo = {
                     "userId": result[0],
                     "workintTitle": result[1],
-                    "startDate": result[2],
-                    "endDate": result[3],
-                    "companyName": result[4],
-                    "workLocation": result[5],
-                    "description": result[6]      
+                    "companyName": result[2],
+                    "workLocation": result[3],
+                    "description": result[4],
+                    "startDate": result[5],
+                    "endDate": result[6],      
                 }
             return Response(json.dumps(experienceInfo),
                             mimetype="application/json",
@@ -94,16 +94,16 @@ def experience():
             cursor.execute("SELECT user_id, login_token from user_session INNER JOIN users ON user_session.user_id = users.id WHERE login_token=?", [login_token,])
             result = cursor.fetchone()
             user_id = result[0]
-            cursor.execute("INSERT INTO work_experience(user_id, working_title, start_date, end_date, company_name, work_location, description) VALUES(?,?,?,?,?,?,?)",[user_id, working_title, company_name, work_location, start_date, end_date, description])
+            cursor.execute("INSERT INTO work_experience(user_id, working_title,company_name, work_location, start_date, end_date, description) VALUES(?,?,?,?,?,?,?)",[user_id, working_title, company_name, work_location, start_date, end_date, description])
             conn.commit()
             experience = {
                 "userId": user_id,
-                "workingTitle": result[1],
-                "startDate": result[2],
-                "endDate": result[3],
-                "companyName": result[4],
-                "workLocation": result[5],
-                "description": result[6]            
+                "workingTitle": working_title,
+                "workLocation": work_location,
+                "description": description,
+                "endDate": end_date,
+                "startDate": start_date,
+                "companyName": company_name
             }
             return Response (json.dumps(experience),
                             mimetype="application/json",
