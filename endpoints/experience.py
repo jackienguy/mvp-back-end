@@ -28,7 +28,7 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.route('/api/users/experience', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@app.route('/api/user/experience', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 def experience():
     if (request.method == 'GET'):
         cursor = None
@@ -86,7 +86,7 @@ def experience():
         company_name = data.get('companyName')
         work_location = data.get('workLocation')
         start_date = data.get('startDate')
-        end_date = data.get('endData')
+        end_date = data.get('endDate')
         description = data.get('description')
        
         try:
@@ -98,7 +98,7 @@ def experience():
             conn.commit()
             experience = {
                 "userId": user_id,
-                "workintTitle": result[1],
+                "workingTitle": result[1],
                 "startDate": result[2],
                 "endDate": result[3],
                 "companyName": result[4],
@@ -152,7 +152,7 @@ def experience():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (working_title  != None and user[1] == login_token):
+            if (working_title != None and user[1] == login_token):
                 cursor.execute("UPDATE work_expereince SET working_title=? WHERE user_id=?", [working_title, user_id])
             if (company_name != None and user[1] == login_token):
                 cursor.execute("UPDATE work_expereince SET company_name=? WHERE user_id=?", [company_name, user_id])

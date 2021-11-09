@@ -28,8 +28,8 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.route('/api/users/education', methods=['GET', 'POST', 'PATCH', 'DELETE'])
-def experience():
+@app.route('/api/user/education', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+def education():
     if (request.method == 'GET'):
         cursor = None
         conn = None

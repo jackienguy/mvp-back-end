@@ -28,7 +28,7 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.route('/api/users/skills', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@app.route('/api/user/skills', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 def skills():
     if (request.method == 'GET'):
         cursor = None
