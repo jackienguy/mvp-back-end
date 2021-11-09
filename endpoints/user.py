@@ -40,7 +40,7 @@ def user():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT id, first_name, last_name, organization_name, location, working_title, email, phone_number FROM users WHERE id=?", [user_id])
+            cursor.execute("SELECT id, first_name, last_name, organization_name, location, working_title, email, phone_number FROM users WHERE id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 user = {

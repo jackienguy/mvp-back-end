@@ -37,12 +37,12 @@ def experience():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT * from work_experience WHERE user_id=?", [user_id,])
+            cursor.execute("SELECT user_id, title, company_name, work_location, description, start_date, end_date from work_experience INNER JOIN users on work_experience.user_id = users.id WHERE user_id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 experienceInfo = {
                     "userId": result[0],
-                    "workintTitle": result[1],
+                    "title": result[1],
                     "companyName": result[2],
                     "workLocation": result[3],
                     "description": result[4],
@@ -82,7 +82,7 @@ def experience():
         conn = None
         data = request.json
         login_token = data.get('loginToken')
-        working_title = data.get('workingTitle')
+        title = data.get('title')
         company_name = data.get('companyName')
         work_location = data.get('workLocation')
         start_date = data.get('startDate')
@@ -94,11 +94,11 @@ def experience():
             cursor.execute("SELECT user_id, login_token from user_session INNER JOIN users ON user_session.user_id = users.id WHERE login_token=?", [login_token,])
             result = cursor.fetchone()
             user_id = result[0]
-            cursor.execute("INSERT INTO work_experience(user_id, working_title,company_name, work_location, start_date, end_date, description) VALUES(?,?,?,?,?,?,?)",[user_id, working_title, company_name, work_location, start_date, end_date, description])
+            cursor.execute("INSERT INTO work_experience(user_id, title ,company_name, work_location, start_date, end_date, description) VALUES(?,?,?,?,?,?,?)",[user_id, title, company_name, work_location, start_date, end_date, description])
             conn.commit()
             experience = {
                 "userId": user_id,
-                "workingTitle": working_title,
+                "workingTitle": title,
                 "workLocation": work_location,
                 "description": description,
                 "endDate": end_date,
@@ -140,7 +140,7 @@ def experience():
         conn = None
         cursor = None
         login_token = data.get('loginToken')
-        working_title = data.get('workingTitle')
+        title = data.get('title')
         company_name = data.get('companyName')
         work_location = data.get('workLocation')
         start_date = data.get('startDate')
@@ -152,8 +152,8 @@ def experience():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (working_title != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET working_title=? WHERE user_id=?", [working_title, user_id])
+            if (title != None and user[1] == login_token):
+                cursor.execute("UPDATE work_expereince SET title=? WHERE user_id=?", [title, user_id])
             if (company_name != None and user[1] == login_token):
                 cursor.execute("UPDATE work_expereince SET company_name=? WHERE user_id=?", [company_name, user_id])
             if (work_location != None and user[1] == login_token):

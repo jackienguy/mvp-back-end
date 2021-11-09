@@ -37,7 +37,7 @@ def skills():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT * from users INNER JOIN skills ON skills.user_id = users.id WHERE user_id=?", [user_id,])
+            cursor.execute("SELECT user_id, skill_type, proficiency_level from skills INNER JOIN users ON skills.user_id = users.id WHERE user_id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 skillsInfo = {

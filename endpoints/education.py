@@ -37,17 +37,17 @@ def education():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT * from users INNER JOIN education ON education.user_id = users.id WHERE user_id=?", [user_id,])
+            cursor.execute("SELECT user_id, certificate_name, major, institution_name, completion_date, institution_location, other from education INNER JOIN users ON education.user_id = users.id WHERE user_id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 eduInfo = {
                     "userId": result[0],
                     "certificateName": result[1],
-                    "major": result[3],
-                    "institutionName": result[4],
-                    "completionDate": result[5],
-                    "location": result[6],
-                    "other": result[7]  
+                    "major": result[2],
+                    "institutionName": result[3],
+                    "completionDate": result[4],
+                    "institutionLocation": result[5],
+                    "other": result[6]  
                 }
             return Response(json.dumps(eduInfo),
                             mimetype="application/json",
@@ -86,7 +86,7 @@ def education():
         major = data.get('major"')
         institution_name = data.get('institutionName')
         completion_date = data.get('completionDate')
-        location = data.get('location')
+        institution_location = data.get('institutionLocation')
         other = data.get('other')
        
         try:
@@ -94,7 +94,7 @@ def education():
             cursor.execute("SELECT user_id, login_token from user_session INNER JOIN users ON user_session.user_id = users.id WHERE login_token=?", [login_token,])
             result = cursor.fetchone()
             user_id = result[0]
-            cursor.execute("INSERT INTO education(user_id, certificate_name, major, institution_name, completion_date, location, other) VALUES(?,?,?,?,?,?,?)",[user_id, certificate_name, major, institution_name, completion_date, location, other])
+            cursor.execute("INSERT INTO education(user_id, certificate_name, major, institution_name, completion_date, institution_location, other) VALUES(?,?,?,?,?,?,?)",[user_id, certificate_name, major, institution_name, completion_date, institution_location, other])
             conn.commit()
             education = {
                 "userId": user_id,
@@ -102,7 +102,7 @@ def education():
                 "major": major,
                 "institutionName": institution_name,
                 "completionDate": completion_date,
-                "location":location,
+                "institutionLocation": institution_location,
                 "other": other          
             }
             return Response (json.dumps(education),
@@ -144,7 +144,7 @@ def education():
         major = data.get('major"')
         institution_name = data.get('institutionName')
         completion_date = data.get('completionDate')
-        location = data.get('location')
+        institution_location = data.get('institutionLocation')
         other = data.get('other')
 
         try:
@@ -160,8 +160,8 @@ def education():
                 cursor.execute("UPDATE education SET institution_name=? WHERE user_id=?", [institution_name, user_id])
             if (completion_date != None and user[1] == login_token):
                 cursor.execute("UPDATE education SET completion_date=? WHERE user_id=?", [completion_date, user_id])
-            if (location != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET location=? WHERE user_id=?", [location, user_id])
+            if (institution_location != None and user[1] == login_token):
+                cursor.execute("UPDATE education SET institution_location=? WHERE user_id=?", [institution_location, user_id])
             if (other != None and user[1] == login_token):
                 cursor.execute("UPDATE education SET other=? WHERE user_id=?", [other, user_id])
             conn.commit()
