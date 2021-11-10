@@ -11,4 +11,5 @@ from endpoints import experience
 from endpoints import skills
 from endpoints import applicants
 from endpoints import application
+from endpoints import requisition
 from endpoints.dbConnect import dbConnection
