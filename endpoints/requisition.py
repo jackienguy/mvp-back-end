@@ -29,7 +29,7 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.router('/api/requisition', methods=['GET'])
+@app.route('/api/requisition', methods=['GET'])
 def requisition():
     if (request.method == "GET"):
         cursor = None
@@ -38,7 +38,7 @@ def requisition():
         
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT job_id, job_title, num_applicants, closing_date, status FROM jobs INNER JOIN users on jobs.recruiter_id = users.id WHERE job_id=", [job_id])
+            cursor.execute("SELECT job_id, job_title, num_applicants, closing_date, status FROM job INNER JOIN users on job.recruiter_id = users.id WHERE job_id=", [job_id])
             result = cursor.fetchall()
             if cursor.rowcount > 0:
                 for requisition in result:

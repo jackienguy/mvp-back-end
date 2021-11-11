@@ -49,7 +49,7 @@ def experience():
                     "startDate": result[5],
                     "endDate": result[6],      
                 }
-            return Response(json.dumps(experienceInfo),
+            return Response(json.dumps(experienceInfo, default=str),
                             mimetype="application/json",
                             status=200)
         
@@ -98,7 +98,7 @@ def experience():
             conn.commit()
             experience = {
                 "userId": user_id,
-                "workingTitle": title,
+                "title": title,
                 "workLocation": work_location,
                 "description": description,
                 "endDate": end_date,

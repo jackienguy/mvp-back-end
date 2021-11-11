@@ -43,7 +43,7 @@ def jobs():
         try:
             (conn, cursor) = dbConnection()
             if recruiter_post:
-                cursor.execute("SELECT * from jobs WHERE recruiter_id=?", [recruiter_id])
+                cursor.execute("SELECT * from job WHERE recruiter_id=?", [recruiter_id])
                 result = cursor.fetchall()
                 if result != None:
                     job_post_data = []
@@ -51,9 +51,9 @@ def jobs():
                         postings = {
                         "jobId": post[0],
                         "recruiterId": post[1],
-                        "workingTitle": post[5],
-                        "organizationName": post[4],
-                        "location": post[6],
+                        "jobTitle": post[5],
+                        "orgName": post[4],
+                        "jobLocation": post[6],
                         "SalaryRange": post[13],
                         "ftStatus": post[7],
                         "permStatus": post[8],
@@ -73,7 +73,7 @@ def jobs():
                                     mimetype="application/json",
                                     status=200)
             elif not_recruiter:
-                cursor.execute("SELECT * from user INNER JOIN jobs on jobs.recruiter_id = users.id")
+                cursor.execute("SELECT * from user INNER JOIN job on job.recruiter_id = users.id")
                 result = cursor.fetchall()
                 if result != None:
                     all_post = []
@@ -81,9 +81,9 @@ def jobs():
                         postings = {
                         "jobId": post[0],
                         "recruiterId": post[1],
-                        "workingTitle": post[5],
-                        "organizationName": post[4],
-                        "location": post[6],
+                        "jobTitle": post[5],
+                        "orgName": post[4],
+                        "jobLocation": post[6],
                         "SalaryRange": post[13],
                         "ftStatus": post[7],
                         "permStatus": post[8],
@@ -140,9 +140,9 @@ def jobs():
         conn = None
         data = request.json
         login_token = data.get('loginToken')
-        working_title = data.get('workingTitle')
-        organization_name = data.get('organizationName')
-        location = data.get('location')
+        job_title = data.get('jobTitle')
+        org_name = data.get('orgName')
+        job_location = data.get('jobLocation')
         salary_range = data.get('salaryRange')
         ft_status = data.get('ftStatus')
         perm_status = data.get('permStatus') 
@@ -163,7 +163,7 @@ def jobs():
             created_at = datetime.datetime.now()
             recruiter_id = result[0]
             if result[1] == login_token:
-                cursor.execute("INSERT INTO jobs(recruiter_id, working_title, organization_name, location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [recruiter_id, working_title, organization_name, location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number])
+                cursor.execute("INSERT INTO job(recruiter_id, job_title, org_name, job_location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [recruiter_id, job_title, org_name, job_location, ft_status, perm_status, salary_range, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number])
             conn.commit()
             job_id = cursor.lastrowid
             createPosting = {
