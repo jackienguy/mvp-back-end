@@ -38,7 +38,7 @@ def applicants():
         
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT job_id, applicant_id, first_name, last_name from application INNER JOIN jobs on jobs.id = application.job_id INNER JOIN users ON application.applicant_id = users.id WHERE job_id=?",[job_id,])
+            cursor.execute("SELECT job_id, applicant_id, first_name, last_name, job_title from application INNER JOIN job on job.id = application.job_id INNER JOIN users ON application.applicant_id = users.id WHERE job_id=?",[job_id,])
             result = cursor.fetchall()
             if cursor.rowcount > 0:
                 applicant_list = []
@@ -47,7 +47,8 @@ def applicants():
                         "jobId": result[0][0],
                         "applicantId": result[0][1],
                         "firstName": result[0][2],
-                        "lastName": result[0][3] 
+                        "lastName": result[0][3],
+                        "jobTItle": result[0][4]
                     }
                     applicant_list.append(applicants)
             return Response(json.dumps(applicant_list),

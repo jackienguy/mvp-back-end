@@ -34,69 +34,69 @@ def dbConnect():
 def jobs():
 # Get job post
     if (request.method == "GET"):
+        params = request.args
         cursor = None
         conn = None
-        recruiter_id = request.args.get('recruiterId')
-        recruiter_post = True
-        not_recruiter = True
+        user_id = params.get('userId')
 
         try:
             (conn, cursor) = dbConnection()
-            if recruiter_post:
-                cursor.execute("SELECT * from job WHERE recruiter_id=?", [recruiter_id])
+            cursor.execute("SELECT role from users WHERE users.id=?", [user_id])
+            user = cursor.fetchall()
+            if (user[0][0]== "recruiter"):
+                cursor.execute("SELECT job.id, recruiter_id, role, job_title, org_name, job_location, salary_range, ft_status, perm_status, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number FROM users INNER JOIN job on users.id = job.recruiter_id WHERE users.id=?", [user_id,])
                 result = cursor.fetchall()
-                if result != None:
-                    job_post_data = []
-                    for post in result:
-                        postings = {
-                        "jobId": post[0],
-                        "recruiterId": post[1],
-                        "jobTitle": post[5],
-                        "orgName": post[4],
-                        "jobLocation": post[6],
-                        "SalaryRange": post[13],
-                        "ftStatus": post[7],
-                        "permStatus": post[8],
-                        "duration": post[9],
-                        "closingDate": post[14],
-                        "createdAt": post[15],
-                        "about": post[10],
-                        "responsibilities": post[11],
-                        "qualifications": post[12],
-                        "recruiterName": post[16],
-                        "recruiterTitle": post[19],
-                        "recruiterEmail": post[17],
-                        "recruiterPhoneNumber": post[18],
-                        }
-                        job_post_data.append(postings)
-                    return Response (json.dumps(job_post_data, default=str),
-                                    mimetype="application/json",
-                                    status=200)
-            elif not_recruiter:
-                cursor.execute("SELECT * from user INNER JOIN job on job.recruiter_id = users.id")
+               
+                job_post_data = []
+                for post in result:
+                    postings = {
+                    "jobId": post[0],
+                    "recruiterId": post[1],
+                    "jobTitle": post[3],
+                    "orgName": post[4],
+                    "jobLocation": post[5],
+                    "SalaryRange": post[6],
+                    "ftStatus": post[7],
+                    "permStatus": post[8],
+                    "duration": post[9],
+                    "closingDate": post[10],
+                    "createdAt": post[11],
+                    "about": post[12],
+                    "responsibilities": post[13],
+                    "qualifications": post[14],
+                    "recruiterName": post[15],
+                    "recruiterTitle": post[16],
+                    "recruiterEmail": post[17],
+                    "recruiterPhoneNumber": post[18],
+                    }
+                    job_post_data.append(postings)
+                return Response (json.dumps(job_post_data, default=str),
+                                mimetype="application/json",
+                                status=200)
+            elif (user[0][0] == "job seeker"):
+                cursor.execute("SELECT job.id, recruiter_id, role, job_title, org_name, job_location, salary_range, ft_status, perm_status, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number FROM users INNER JOIN job on users.id = job.recruiter_id")
                 result = cursor.fetchall()
                 if result != None:
                     all_post = []
                     for post in result:
                         postings = {
-                        "jobId": post[0],
-                        "recruiterId": post[1],
-                        "jobTitle": post[5],
-                        "orgName": post[4],
-                        "jobLocation": post[6],
-                        "SalaryRange": post[13],
-                        "ftStatus": post[7],
-                        "permStatus": post[8],
-                        "duration": post[9],
-                        "closingDate": post[14],
-                        "createdAt": post[15],
-                        "about": post[10],
-                        "responsibilities": post[11],
-                        "qualifications": post[12],
-                        "recruiterName": post[16],
-                        "recruiterTitle": post[19],
-                        "recruiterEmail": post[17],
-                        "recruiterPhoneNumber": post[18],
+                            "jobId": post[0],
+                            "jobTitle": post[3],
+                            "orgName": post[4],
+                            "jobLocation": post[5],
+                            "SalaryRange": post[6],
+                            "ftStatus": post[7],
+                            "permStatus": post[8],
+                            "duration": post[9],
+                            "closingDate": post[10],
+                            "createdAt": post[11],
+                            "about": post[12],
+                            "responsibilities": post[13],
+                            "qualifications": post[14],
+                            "recruiterName": post[15],
+                            "recruiterTitle": post[16],
+                            "recruiterEmail": post[17],
+                            "recruiterPhoneNumber": post[18],
                         }
                         all_post.append(postings)
                 return Response (json.dumps(all_post, default=str),

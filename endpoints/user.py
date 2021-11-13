@@ -162,7 +162,7 @@ def user():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
+            cursor.execute("SELECT user_id, login_token, role FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
             if (first_name != None and user[1] == login_token):
@@ -183,7 +183,8 @@ def user():
                     cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
             conn.commit()
             updatedUser = {
-                "userId": user_id
+                "userId": user_id,
+                "role": user[2]
             }
             return Response(json.dumps(updatedUser),
                             mimetype="application/json",
