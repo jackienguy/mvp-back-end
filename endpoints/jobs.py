@@ -46,33 +46,41 @@ def jobs():
             if (user[0][0]== "recruiter"):
                 cursor.execute("SELECT job.id, recruiter_id, role, job_title, org_name, job_location, salary_range, ft_status, perm_status, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number FROM users INNER JOIN job on users.id = job.recruiter_id WHERE users.id=?", [user_id,])
                 result = cursor.fetchall()
-               
-                job_post_data = []
-                for post in result:
-                    postings = {
-                    "jobId": post[0],
-                    "recruiterId": post[1],
-                    "jobTitle": post[3],
-                    "orgName": post[4],
-                    "jobLocation": post[5],
-                    "SalaryRange": post[6],
-                    "ftStatus": post[7],
-                    "permStatus": post[8],
-                    "duration": post[9],
-                    "closingDate": post[10],
-                    "createdAt": post[11],
-                    "about": post[12],
-                    "responsibilities": post[13],
-                    "qualifications": post[14],
-                    "recruiterName": post[15],
-                    "recruiterTitle": post[16],
-                    "recruiterEmail": post[17],
-                    "recruiterPhoneNumber": post[18],
+                if cursor.rowcount > 0:
+                    job_post_data = []
+                    for post in result:
+                        postings = {
+                        "jobId": post[0],
+                        "recruiterId": post[1],
+                        "jobTitle": post[3],
+                        "orgName": post[4],
+                        "jobLocation": post[5],
+                        "SalaryRange": post[6],
+                        "ftStatus": post[7],
+                        "permStatus": post[8],
+                        "duration": post[9],
+                        "closingDate": post[10],
+                        "createdAt": post[11],
+                        "about": post[12],
+                        "responsibilities": post[13],
+                        "qualifications": post[14],
+                        "recruiterName": post[15],
+                        "recruiterTitle": post[16],
+                        "recruiterEmail": post[17],
+                        "recruiterPhoneNumber": post[18],
+                        }
+                        job_post_data.append(postings)
+                    return Response (json.dumps(job_post_data, default=str),
+                                    mimetype="application/json",
+                                    status=200)
+                else:
+                    msg = {
+                        "message": "No job postings"
                     }
-                    job_post_data.append(postings)
-                return Response (json.dumps(job_post_data, default=str),
-                                mimetype="application/json",
-                                status=200)
+                    return Response(json.dumps(msg),
+                            mimetype="application/json",
+                            status=400)
+                    
             elif (user[0][0] == "job seeker"):
                 cursor.execute("SELECT job.id, recruiter_id, role, job_title, org_name, job_location, salary_range, ft_status, perm_status, duration, closing_date, created_at, about, responsibilities, qualifications, recruiter_name, recruiter_title, recruiter_email, recruiter_phone_number FROM users INNER JOIN job on users.id = job.recruiter_id")
                 result = cursor.fetchall()

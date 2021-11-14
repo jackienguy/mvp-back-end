@@ -45,9 +45,16 @@ def skills():
                     "skillType": result[1],
                     "proficiencyLevel": result[2],   
                 }
-            return Response(json.dumps(skillsInfo),
-                            mimetype="application/json",
-                            status=200)
+                return Response(json.dumps(skillsInfo),
+                                mimetype="application/json",
+                                status=200)
+            else:
+                msg = {
+                    "message": "section empty"
+                }
+                return Response(json.dumps(msg),
+                                mimetype="application/json",
+                                status=400)
         
         except mariadb.DataError as e:
             print(e)
@@ -138,11 +145,13 @@ def skills():
             user_id = user[0]
             if (skill_type != None and user[1] == login_token):
                 cursor.execute("UPDATE skills SET skill_type=? WHERE user_id=?", [skill_type, user_id])
-            if (proficiency_level != None and user[1] == login_token):
+            if(proficiency_level !=None and user[1] == login_token):
                 cursor.execute("UPDATE skills SET proficiency_level=? WHERE user_id=?", [proficiency_level, user_id])
             conn.commit()
             updatedSkills = {
-                "userId": user_id
+                "userId": user_id,
+                "proficiencyLevel": proficiency_level,
+                "skill_type": skill_type
             }
             return Response(json.dumps(updatedSkills),
                             mimetype="application/json",

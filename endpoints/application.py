@@ -29,7 +29,7 @@ def dbConnection():
     
     return (conn, cursor)
 
-@app.route('/api/application', methods=['GET', 'POST'])
+@app.route('/api/application', methods=['POST'])
 def application ():
     if (request.method == 'POST'):
         cursor = None
@@ -61,7 +61,7 @@ def application ():
                 }
                 return Response (json.dumps(msg),
                                 mimetype="application/json",
-                                status=200)
+                                status=400)
                  
         except mariadb.DataError as e:
             print(e)

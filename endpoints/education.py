@@ -49,10 +49,17 @@ def education():
                     "institutionLocation": result[5],
                     "other": result[6]  
                 }
-            return Response(json.dumps(eduInfo),
-                            mimetype="application/json",
-                            status=200)
-        
+                return Response(json.dumps(eduInfo),
+                                mimetype="application/json",
+                                status=200)
+            else:
+                msg = {
+                    "message": "section empty"
+                }
+                return Response(json.dumps(msg),
+                                mimetype="application/json",
+                                status=400)
+
         except mariadb.DataError as e:
             print(e)
         except mariadb.OperationalError as e:
