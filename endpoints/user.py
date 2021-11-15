@@ -165,30 +165,37 @@ def user():
             cursor.execute("SELECT user_id, login_token, role FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (first_name != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET first_name=? WHERE id=?", [first_name, user_id])
-            if (last_name != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET last_name=? WHERE id=?", [last_name, user_id])
-            if (email != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET email=? WHERE id=?", [email, user_id])
-            if (organization_name != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET organization_name=? WHERE id=?", [organization_name, user_id])
-            if (location != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET location=? WHERE id=?", [location, user_id])
-            if (company_website != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET company_website=? WHERE id=?", [company_website, user_id])
-            if (working_title != None and user[1] == login_token):
-                cursor.execute("UPDATE users SET working_title=? WHERE id=?", [working_title, user_id])
-            if (phone_number != None and user[1] == login_token):
-                    cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
-            conn.commit()
-            updatedUser = {
-                "userId": user_id,
-                "role": user[2]
-            }
-            return Response(json.dumps(updatedUser),
-                            mimetype="application/json",
-                            status=200)
+            if (user != None):
+                if (first_name != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET first_name=? WHERE id=?", [first_name, user_id])
+                if (last_name != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET last_name=? WHERE id=?", [last_name, user_id])
+                if (email != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET email=? WHERE id=?", [email, user_id])
+                if (organization_name != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET organization_name=? WHERE id=?", [organization_name, user_id])
+                if (location != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET location=? WHERE id=?", [location, user_id])
+                if (company_website != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET company_website=? WHERE id=?", [company_website, user_id])
+                if (working_title != "" and user[1] == login_token):
+                    cursor.execute("UPDATE users SET working_title=? WHERE id=?", [working_title, user_id])
+                if (phone_number != "" and user[1] == login_token):
+                        cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
+                conn.commit()
+                cursor.execute("SELECT * FROM users WHERE id=?", [user_id,])
+                updatedUser = {
+                    "userId": user_id,
+                    "role": user[2]
+                }
+                return Response(json.dumps(updatedUser),
+                                mimetype="application/json",
+                                status=200)
+            
+            else:
+                    return Response("Action denied, you are not authenticated user",
+                                mimetype="text/plain",
+                                status=401)
 
         except ValueError as error:
             print("Error" +str(error))
