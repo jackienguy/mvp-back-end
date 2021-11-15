@@ -184,6 +184,7 @@ def user():
                         cursor.execute("UPDATE users SET phone_number=? WHERE id=?", [phone_number, user_id])
                 conn.commit()
                 cursor.execute("SELECT * FROM users WHERE id=?", [user_id,])
+                result = cursor.fetchone()
                 updatedUser = {
                     "userId": user_id,
                     "role": user[2]
@@ -227,13 +228,13 @@ def user():
         conn = None
         cursor = None
         login_token = request.json.get("loginToken")
-        password = request.json.get('password')
+        password = request.json.get("password")
 
         try:
             (conn, cursor) = dbConnection()
             cursor.execute("SELECT user_id, password, login_token FROM users INNER JOIN user_session ON user_session.user_id = users.id WHERE login_token=?", [login_token,])
-            user = cursor.fetchall()
-            if user[0][1] == password and user[0][2] == login_token:
+            user = cursor.fetchone()
+            if user[1] == password and user[2] == login_token:
                 cursor.execute("DELETE FROM users WHERE password=?",[password,])
                 conn.commit()
                 msg = {

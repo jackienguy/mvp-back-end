@@ -174,6 +174,7 @@ def education():
                     cursor.execute("UPDATE education SET other=? WHERE user_id=?", [other, user_id])
                 conn.commit()
                 cursor.execute("SELECT user_id, certificate_name, major, institution_name, completion_date, institution_location, other FROM education INNER JOIN users ON users.id = education.user_id WHERE user_id=?", [user_id,])
+                result = cursor.fetchall()
                 updatedEducation = {
                     "userId": user_id,
                     "certificateName": certificate_name,

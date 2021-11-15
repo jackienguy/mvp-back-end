@@ -174,6 +174,7 @@ def experience():
                     cursor.execute("UPDATE work_experience SET description=? WHERE user_id=?", [description, user_id])
                 conn.commit()
                 cursor.execute("SELECT user_id, title, company_name, work_location, start_date, end_date, description FROM work_experience INNER JOIN users ON users.id = work_experience.user_id WHERE user_id=?", [user_id,])
+                result = cursor.fetchall()
                 updatedExperience = {
                     "userId": user_id,
                     "loginToken": login_token,
