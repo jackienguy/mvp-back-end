@@ -38,13 +38,14 @@ def application ():
         login_token = data.get('loginToken')
         job_id = data.get('jobId')
         
+        
         try: 
             (conn, cursor) = dbConnection()
             (cursor.execute("SELECT user_id, login_token from user_session INNER JOIN users ON user_session.user_id = users.id WHERE login_token=?", [login_token,]))
             result = cursor.fetchall()
             applicant_id = result [0][0]
             if result[0][1] == login_token:
-                cursor.execute("INSERT INTO application(applicant_id, job_id) VALUES(?,?)", [applicant_id, job_id])
+                cursor.execute("INSERT INTO application(applicant_id, job_id, numApplicants) VALUES(?,?,?)", [applicant_id, job_id])
                 application_id = cursor.lastrowid
                 conn.commit()
                 applications = {

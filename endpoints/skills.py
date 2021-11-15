@@ -143,19 +143,28 @@ def skills():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (skill_type != None and user[1] == login_token):
-                cursor.execute("UPDATE skills SET skill_type=? WHERE user_id=?", [skill_type, user_id])
-            if(proficiency_level !=None and user[1] == login_token):
-                cursor.execute("UPDATE skills SET proficiency_level=? WHERE user_id=?", [proficiency_level, user_id])
-            conn.commit()
-            updatedSkills = {
-                "userId": user_id,
-                "proficiencyLevel": proficiency_level,
-                "skill_type": skill_type
-            }
-            return Response(json.dumps(updatedSkills),
-                            mimetype="application/json",
-                            status=200)
+            if( user != None):
+                if (skill_type != "" and user[1] == login_token):
+                    cursor.execute("UPDATE skills SET skill_type=? WHERE user_id=?", [skill_type, user_id])
+                if(proficiency_level != "" and user[1] == login_token):
+                    cursor.execute("UPDATE skills SET proficiency_level=? WHERE user_id=?", [proficiency_level, user_id])
+                conn.commit()
+                cursor.execute("SELECT user_id, proficiency_level, skill_type FROM skills INNER JOIN users ON users.id = skills.user_id WHERE user_id=?", [user_id,] )
+                updatedSkills = {
+                    "userId": user_id,
+                    "proficiencyLevel": proficiency_level,
+                    "skill_type": skill_type
+                }
+                return Response(json.dumps(updatedSkills),
+                                mimetype="application/json",
+                                status=200)
+            else:
+                msg = {
+                    "message": "Action denied, authentication no verified"
+                }
+                return Response(json.dumps(msg),
+                                mimetype="application/json",
+                                status=401)
 
         except ValueError as error:
             print("Error" +str(error))

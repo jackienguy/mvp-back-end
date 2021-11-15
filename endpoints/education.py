@@ -159,25 +159,40 @@ def education():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (certificate_name != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET certificate_name=? WHERE user_id=?", [certificate_name, user_id])
-            if (major != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET major=? WHERE user_id=?", [major, user_id])
-            if (institution_name != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET institution_name=? WHERE user_id=?", [institution_name, user_id])
-            if (completion_date != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET completion_date=? WHERE user_id=?", [completion_date, user_id])
-            if (institution_location != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET institution_location=? WHERE user_id=?", [institution_location, user_id])
-            if (other != None and user[1] == login_token):
-                cursor.execute("UPDATE education SET other=? WHERE user_id=?", [other, user_id])
-            conn.commit()
-            updatedEducation = {
-                "userId": user_id
-            }
-            return Response(json.dumps(updatedEducation),
-                            mimetype="application/json",
-                            status=200)
+            if (user != None):
+                if (certificate_name != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET certificate_name=? WHERE user_id=?", [certificate_name, user_id])
+                if (major != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET major=? WHERE user_id=?", [major, user_id])
+                if (institution_name != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET institution_name=? WHERE user_id=?", [institution_name, user_id])
+                if (completion_date != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET completion_date=? WHERE user_id=?", [completion_date, user_id])
+                if (institution_location != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET institution_location=? WHERE user_id=?", [institution_location, user_id])
+                if (other != "" and user[1] == login_token):
+                    cursor.execute("UPDATE education SET other=? WHERE user_id=?", [other, user_id])
+                conn.commit()
+                cursor.execute("SELECT user_id, certificate_name, major, institution_name, completion_date, institution_location, other FROM education INNER JOIN users ON users.id = education.user_id WHERE user_id=?", [user_id,])
+                updatedEducation = {
+                    "userId": user_id,
+                    "certificateName": certificate_name,
+                    "major": major,
+                    "institutionName": institution_name,
+                    "completetionDate": completion_date,
+                    "institutionLocation": institution_location,
+                    "other": other
+                }
+                return Response(json.dumps(updatedEducation, default=str),
+                                mimetype="application/json",
+                                status=200)
+            else:
+                msg = {
+                    "message": "section empty"
+                }
+                return Response(json.dumps(msg),
+                                mimetype="application/json",
+                                status=401)
 
         except ValueError as error:
             print("Error" +str(error))

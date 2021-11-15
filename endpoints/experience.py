@@ -58,7 +58,7 @@ def experience():
                 }
                 return Response(json.dumps(msg),
                                 mimetype="application/json",
-                                status=400)
+                                status=401)
         
         except mariadb.DataError as e:
             print(e)
@@ -151,7 +151,7 @@ def experience():
         company_name = data.get('companyName')
         work_location = data.get('workLocation')
         start_date = data.get('startDate')
-        end_date = data.get('endData')
+        end_date = data.get('endDate')
         description = data.get('description')
 
         try:
@@ -159,32 +159,41 @@ def experience():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (title != None and user[1] == login_token ):
-                cursor.execute("UPDATE work_experience SET title=? WHERE user_id=?", [title, user_id])
-            if (company_name != None and user[1] == login_token):
-                cursor.execute("UPDATE work_experience SET company_name=? WHERE user_id=?", [company_name, user_id])
-            if (work_location != None and user[1] == login_token):
-                cursor.execute("UPDATE work_experience SET work_location=? WHERE user_id=?", [work_location, user_id])
-            if (start_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_experience SET start_date=? WHERE user_id=?", [start_date, user_id])
-            if (end_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_experience SET end_date=? WHERE user_id=?", [end_date, user_id])
-            if (description != None and user[1] == login_token):
-                cursor.execute("UPDATE work_experience SET description=? WHERE user_id=?", [description, user_id])
-            conn.commit()
-            updatedExperience = {
-                "userId": user_id,
-                "loginToken": login_token,
-                "title": title,
-                "companyName": company_name,
-                "workLocation": work_location,
-                "startDate": start_date,
-                "endDate": end_date,
-                "description": description
-            }
-            return Response(json.dumps(updatedExperience),
-                            mimetype="application/json",
-                            status=200)
+            if (user !=None):
+                if (title !="" and user[1] == login_token ):
+                    cursor.execute("UPDATE work_experience SET title=? WHERE user_id=?", [title, user_id])
+                if (company_name !="" and user[1] == login_token):
+                    cursor.execute("UPDATE work_experience SET company_name=? WHERE user_id=?", [company_name, user_id])
+                if (work_location !="" and user[1] == login_token):
+                    cursor.execute("UPDATE work_experience SET work_location=? WHERE user_id=?", [work_location, user_id])
+                if (start_date !="" and user[1] == login_token):
+                    cursor.execute("UPDATE work_experience SET start_date=? WHERE user_id=?", [start_date, user_id])
+                if (end_date !="" and user[1] == login_token):
+                    cursor.execute("UPDATE work_experience SET end_date=? WHERE user_id=?", [end_date, user_id])
+                if (description !="" and user[1] == login_token):
+                    cursor.execute("UPDATE work_experience SET description=? WHERE user_id=?", [description, user_id])
+                conn.commit()
+                cursor.execute("SELECT user_id, title, company_name, work_location, start_date, end_date, description FROM work_experience INNER JOIN users ON users.id = work_experience.user_id WHERE user_id=?", [user_id,])
+                updatedExperience = {
+                    "userId": user_id,
+                    "loginToken": login_token,
+                    "title": title,
+                    "companyName": company_name,
+                    "workLocation": work_location,
+                    "startDate": start_date,
+                    "endDate": end_date,
+                    "description": description
+                }
+                return Response(json.dumps(updatedExperience, default=str),
+                                mimetype="application/json",
+                                status=200)
+            else:
+                msg = {
+                    "message": "Denied, authentication not verified"
+                }
+                return Response(json.dumps(msg),
+                                mimetype="application/json",
+                                status=400)
 
         except ValueError as error:
             print("Error" +str(error))
