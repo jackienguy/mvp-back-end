@@ -159,21 +159,28 @@ def experience():
             cursor.execute("SELECT user_id, login_token FROM user_session INNER JOIN users on user_session.user_id = users.id WHERE login_token=?", [login_token])
             user = cursor.fetchone()
             user_id = user[0]
-            if (title != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET title=? WHERE user_id=?", [title, user_id])
+            if (title != None and user[1] == login_token ):
+                cursor.execute("UPDATE work_experience SET title=? WHERE user_id=?", [title, user_id])
             if (company_name != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET company_name=? WHERE user_id=?", [company_name, user_id])
+                cursor.execute("UPDATE work_experience SET company_name=? WHERE user_id=?", [company_name, user_id])
             if (work_location != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET work_location=? WHERE user_id=?", [work_location, user_id])
+                cursor.execute("UPDATE work_experience SET work_location=? WHERE user_id=?", [work_location, user_id])
             if (start_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET start_date=? WHERE user_id=?", [start_date, user_id])
+                cursor.execute("UPDATE work_experience SET start_date=? WHERE user_id=?", [start_date, user_id])
             if (end_date != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET end_date=? WHERE user_id=?", [end_date, user_id])
+                cursor.execute("UPDATE work_experience SET end_date=? WHERE user_id=?", [end_date, user_id])
             if (description != None and user[1] == login_token):
-                cursor.execute("UPDATE work_expereince SET description=? WHERE user_id=?", [description, user_id])
+                cursor.execute("UPDATE work_experience SET description=? WHERE user_id=?", [description, user_id])
             conn.commit()
             updatedExperience = {
-                "userId": user_id
+                "userId": user_id,
+                "loginToken": login_token,
+                "title": title,
+                "companyName": company_name,
+                "workLocation": work_location,
+                "startDate": start_date,
+                "endDate": end_date,
+                "description": description
             }
             return Response(json.dumps(updatedExperience),
                             mimetype="application/json",
