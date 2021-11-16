@@ -45,7 +45,7 @@ def application ():
             result = cursor.fetchall()
             applicant_id = result [0][0]
             if result[0][1] == login_token:
-                cursor.execute("INSERT INTO application(applicant_id, job_id, numApplicants) VALUES(?,?,?)", [applicant_id, job_id])
+                cursor.execute("INSERT INTO application(applicant_id, job_id) VALUES(?,?)", [applicant_id, job_id])
                 application_id = cursor.lastrowid
                 conn.commit()
                 applications = {

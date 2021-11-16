@@ -40,7 +40,7 @@ def user():
 
         try:
             (conn, cursor) = dbConnection()
-            cursor.execute("SELECT id, first_name, last_name, organization_name, location, working_title, email, phone_number FROM users WHERE id=?", [user_id,])
+            cursor.execute("SELECT id, first_name, last_name, organization_name, location, working_title, email, phone_number, role FROM users WHERE id=?", [user_id,])
             result = cursor.fetchone()
             if result != None:
                 user = {
@@ -51,7 +51,8 @@ def user():
                     "organizationName": result[3],
                     "location": result[4],
                     "workingTitle": result[5],
-                    "phoneNumber": result[7]
+                    "phoneNumber": result[7],
+                    "role": result[8]
                 }
                 return Response(json.dumps(user),
                                 mimetype="application/json",
